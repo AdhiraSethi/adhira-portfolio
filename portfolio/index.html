@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Adhira Sethi | AI and software projects</title>
+<meta name="description" content="Adhira Sethi is a computer science student at JIIT Noida who builds AI products end to end: email agents, browser tools and real-time vision apps.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Unbounded:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="aurora" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav-wrap">
+  <nav class="nav frame" aria-label="Primary">
+    <a class="brand" href="#top" aria-label="Adhira Sethi, back to top"><span class="mark">AS</span></a>
+    <ul class="links" id="links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#achievements">Achievements</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="icon-btn" id="theme" type="button" aria-label="Switch theme"></button>
+      <button class="icon-btn menu" id="menu" type="button" aria-expanded="false" aria-controls="links" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<main id="top">
+  <section class="hero" aria-label="Introduction">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="status enter" style="--d:.05s"><span class="dot" aria-hidden="true"></span>Looking for software and AI internships</p>
+        <h1 class="name" aria-label="Adhira Sethi">
+          <span class="line" aria-hidden="true"><span>Adhira</span></span>
+          <span class="line" aria-hidden="true"><span>Sethi</span></span>
+        </h1>
+        <p class="lede enter" style="--d:.55s">Computer science student building AI products end to end: email agents, browser tools and real-time vision apps.</p>
+        <div class="cta enter" style="--d:.7s">
+          <a class="btn primary" href="#projects">See my projects</a>
+          <a class="btn ghost" href="#contact">Get in touch</a>
+        </div>
+        <p class="hero-fact enter" style="--d:.85s">B.Tech CSE at JIIT Noida, class of 2028</p>
+      </div>
+
+      <figure class="viewfinder frame">
+        <div class="stage" id="stage" role="img" aria-label="Animated 3D hand made of 21 tracking points, cycling through hand gestures">
+          <canvas id="scene"></canvas>
+          <div class="fallback" aria-hidden="true"></div>
+        </div>
+        <span class="corner tl" aria-hidden="true"></span><span class="corner tr" aria-hidden="true"></span>
+        <span class="corner bl" aria-hidden="true"></span><span class="corner br" aria-hidden="true"></span>
+        <p class="hud-top" aria-hidden="true">21 landmarks, the points SignBridge AI tracks</p>
+        <div class="hud">
+          <span class="pose" id="poseName" aria-hidden="true">Open hand</span>
+          <button class="mini-btn" id="nextPose" type="button" aria-label="Show the next hand gesture">Next gesture</button>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" id="about" aria-labelledby="about-h">
+    <div class="wrap about-grid">
+      <div>
+        <h2 class="h2" id="about-h">About</h2>
+        <div class="prose">
+          <p>I love coding. There's nothing quite like starting with a blank file and ending up with something that works, and that's what pulled me into computer science. These days I'm most excited by the place where software meets AI and data: taking a messy real-world problem, working out what the data is telling me, and turning it into a product people can actually use.
+
+I like building things end to end. That's meant an agentic email-triage system that decides when to reply and when to hand off to a human, a Chrome extension that turns any YouTube video into something you can question and learn from, and a real-time sign language app built on hand tracking. Along the way I've worked across Python and FastAPI, Node.js and Express, and React with TypeScript.</p>
+
+<p>Outside my own projects, I lead the technical society at JIIT Youth Club, and I'm part of the McKinsey.org Forward Program and the Codess.Cafe open-source cohort. I'm looking for a software or AI internship where I can learn from strong engineers, ship real work and keep growing..</p>
+        </div>
+      </div>
+      <div class="idcard-wrap">
+        <article class="idcard frame tilt" data-tilt="10">
+          <div class="sheen" aria-hidden="true"></div>
+          <div class="id-band" aria-hidden="true"></div>
+          <div class="id-top">
+            <span class="id-mark" aria-hidden="true">AS</span>
+            <div>
+              <p class="id-name">Adhira Sethi</p>
+              <p class="id-role">Management Head, JIIT Youth Club Technical</p>
+            </div>
+          </div>
+          <dl class="id-list">
+            <div><dt>Degree</dt><dd>B.Tech, Computer Science and Engineering</dd></div>
+            <div><dt>University</dt><dd>Jaypee Institute of Information Technology, Noida</dd></div>
+            <div><dt>Graduating</dt><dd>July 2028 (expected)</dd></div>
+          </dl>
+          <div class="id-programs">
+            <ul class="chips">
+              <li>McKinsey.org Forward Program</li>
+              <li>Codess.Cafe OSS Cohort</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="projects" aria-labelledby="projects-h">
+    <div class="wrap">
+      <h2 class="h2" id="projects-h">Projects</h2>
+      <p class="section-intro">Four things I've built, from an email-triage agent to a sign language app.</p>
+      <p class="section-note">The previews are illustrations, not screenshots.</p>
+
+      <div class="bento">
+        <article class="proj frame tilt" data-tilt="2.5" style="--span:7">
+          <div class="chrome"><i></i><i></i><i></i><span class="chrome-title">VoxIntel</span></div>
+          <div class="viz vox" aria-hidden="true">
+            <div class="col">
+              <div class="mail"><small>Sample email</small><b>Where is my refund? This is my third message.</b></div>
+            </div>
+            <div class="arrow"></div>
+            <div class="col">
+              <div class="step"><span>Intent</span>Refund request</div>
+              <div class="step"><span>Sentiment</span>Frustrated</div>
+              <div class="step"><span>Priority</span>High</div>
+            </div>
+            <div class="arrow"></div>
+            <div class="col">
+              <div class="out">Routine and confident: draft a reply</div>
+              <div class="out on">High priority: send to a manager</div>
+            </div>
+          </div>
+          <div class="proj-body">
+            <h3>VoxIntel</h3>
+            <p>An agentic email-triage system. A 12-step pipeline reads each email for intent, sentiment, emotion and priority, then a RAG module drafts a context-aware reply with a confidence score. Low-confidence or high-priority emails go to a manager for review. Served as a REST API with FastAPI.</p>
+            <ul class="chips"><li>Python</li><li>FastAPI</li><li>Groq API</li><li>LLaMA 3.3 70B</li><li>LLaMA 3.1 8B</li><li>RAG</li></ul>
+            <a class="link" href="https://github.com/AdhiraSethi/ai-agent-email-analyzer" target="_blank" rel="noopener">View code on GitHub</a>
+          </div>
+        </article>
+
+        <article class="proj frame tilt" data-tilt="2.5" style="--span:5">
+          <div class="chrome"><i></i><i></i><i></i><span class="chrome-title">YouTube Learning Extension</span></div>
+          <div class="viz yt" aria-hidden="true">
+            <div class="player"><div class="play"></div><div class="timeline-bar"><span></span></div></div>
+            <ul class="stamps"><li>00:42</li><li class="on">04:10 to 06:32</li><li>09:05</li></ul>
+            <div class="bubbles">
+              <p class="bubble q">Summarize this section</p>
+              <p class="bubble a">A short summary grounded in that part of the transcript.</p>
+            </div>
+          </div>
+          <div class="proj-body">
+            <h3>AI-Powered YouTube Learning Extension</h3>
+            <p>A Chrome extension that pulls timestamped transcripts from YouTube and explains, summarizes or answers questions about any section you select. Timestamps jump you straight to the moment in the video.</p>
+            <ul class="chips"><li>React</li><li>TypeScript</li><li>Tailwind CSS</li><li>Chrome Extension APIs</li><li>Node.js</li><li>Express</li><li>Gemini AI</li></ul>
+            <a class="link" href="https://github.com/AdhiraSethi/youtube-extension" target="_blank" rel="noopener">View code on GitHub</a>
+          </div>
+        </article>
+
+        <article class="proj frame tilt" data-tilt="2.5" style="--span:5">
+          <div class="chrome"><i></i><i></i><i></i><span class="chrome-title">SignBridge AI</span></div>
+          <div class="viz sign" aria-hidden="true">
+            <svg class="hand-svg" viewBox="0 0 170 200">
+              <defs>
+                <linearGradient id="hg" gradientUnits="userSpaceOnUse" x1="20" y1="10" x2="150" y2="190">
+                  <stop offset="0" style="stop-color:var(--g1)"/><stop offset=".5" style="stop-color:var(--g2)"/><stop offset="1" style="stop-color:var(--g3)"/>
+                </linearGradient>
+              </defs>
+              <path class="bone" d="M100 180 L81 160 L60 143 L43 125 L31 110"/>
+              <path class="bone" d="M100 180 L70 103 L66 72 L64 53 L62 35"/>
+              <path class="bone" d="M90 96 L89 62 L88 40 L88 22"/>
+              <path class="bone" d="M110 101 L112 70 L113 49 L113 32"/>
+              <path class="bone" d="M129 110 L133 86 L135 71 L138 56"/>
+              <path class="bone" d="M100 180 L129 110 M70 103 L90 96 L110 101 L129 110"/>
+              <circle class="pt" cx="100" cy="180" r="4.4"/>
+              <circle class="pt" cx="81" cy="160" r="3.4"/><circle class="pt" cx="60" cy="143" r="3.4"/><circle class="pt" cx="43" cy="125" r="3.4"/><circle class="pt" cx="31" cy="110" r="3.8"/>
+              <circle class="pt" cx="70" cy="103" r="3.4"/><circle class="pt" cx="66" cy="72" r="3.4"/><circle class="pt" cx="64" cy="53" r="3.4"/><circle class="pt" cx="62" cy="35" r="3.8"/>
+              <circle class="pt" cx="90" cy="96" r="3.4"/><circle class="pt" cx="89" cy="62" r="3.4"/><circle class="pt" cx="88" cy="40" r="3.4"/><circle class="pt" cx="88" cy="22" r="3.8"/>
+              <circle class="pt" cx="110" cy="101" r="3.4"/><circle class="pt" cx="112" cy="70" r="3.4"/><circle class="pt" cx="113" cy="49" r="3.4"/><circle class="pt" cx="113" cy="32" r="3.8"/>
+              <circle class="pt" cx="129" cy="110" r="3.4"/><circle class="pt" cx="133" cy="86" r="3.4"/><circle class="pt" cx="135" cy="71" r="3.4"/><circle class="pt" cx="138" cy="56" r="3.8"/>
+            </svg>
+            <div class="signout">
+              <p class="say">Hello</p>
+              <small>Sample output: gesture to text and speech</small>
+            </div>
+          </div>
+          <div class="proj-body">
+            <h3>SignBridge AI</h3>
+            <p>Real-time sign language recognition built on MediaPipe Hands' 21-point landmark tracking. The React app turns gestures into text and speech, with live detection, conversation history and multilingual support for hearing- and speech-impaired users.</p>
+            <ul class="chips"><li>React.js</li><li>MediaPipe Hands</li><li>JavaScript</li></ul>
+          </div>
+        </article>
+
+        <article class="proj frame tilt" data-tilt="2.5" style="--span:7">
+          <div class="chrome"><i></i><i></i><i></i><span class="chrome-title">Climate Data Analysis and Visualization</span></div>
+          <div class="viz climate" aria-hidden="true">
+            <div class="heat" id="heat"></div>
+            <div class="legend"><span>Cooler</span><b></b><span>Warmer</span></div>
+          </div>
+          <div class="proj-body">
+            <h3>Climate Data Analysis and Visualization</h3>
+            <p>An exploration of more than 25 years of climate data that surfaces temperature trends, precipitation patterns and seasonal anomalies across regions, communicated through time-series plots, heatmaps and correlation matrices.</p>
+            <ul class="chips"><li>Python</li><li>pandas</li><li>NumPy</li><li>Matplotlib</li><li>Seaborn</li></ul>
+            <a class="link" href="https://github.com/AdhiraSethi/Climate-Analysis-EDA" target="_blank" rel="noopener">View code on GitHub</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="experience" aria-labelledby="exp-h">
+    <div class="wrap exp-grid">
+      <div>
+        <h2 class="h2" id="exp-h">Experience</h2>
+        <p class="section-intro">An internship shipping an AI system, and a student society I now help lead.</p>
+      </div>
+      <ol class="timeline">
+        <li class="tl-item now frame">
+          <h3>Management Head, JIIT Youth Club (Technical)</h3>
+          <p class="tl-meta">July 2026 to present</p>
+          <p class="desc">I lead the technical society of JIIT's central student body, coordinating team members and technical events.</p>
+        </li>
+        <li class="tl-item frame">
+          <h3>AI and Data Science Intern, Exato.AI</h3>
+          <p class="tl-meta">June 2026 to July 2026, onsite</p>
+          <ul>
+            <li>Owned the design and delivery of VoxIntel, an agentic email-intelligence system, from architecture through deployment.</li>
+            <li>Worked through the ML lifecycle, from data preprocessing and exploratory analysis to model evaluation, moving components from notebook to production with the engineering team to make automated decisions more reliable.</li>
+          </ul>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="skills" aria-labelledby="skills-h">
+    <div class="wrap">
+      <h2 class="h2" id="skills-h">Skills</h2>
+      <p class="section-intro">What I reach for when I build.</p>
+      <div class="skills">
+        <div class="skill lead frame" style="--span:4">
+          <h3>AI and ML</h3>
+          <ul class="chips"><li>LLM agent design</li><li>RAG</li><li>Prompt engineering</li><li>Gemini API</li><li>Groq API</li><li>LLaMA 3.3 70B</li><li>LLaMA 3.1 8B</li><li>pandas</li><li>NumPy</li><li>scikit-learn</li></ul>
+        </div>
+        <div class="skill frame" style="--span:2">
+          <h3>Languages</h3>
+          <ul class="chips"><li>C</li><li>C++</li><li>Python</li><li>JavaScript</li><li>TypeScript</li><li>SQL</li><li>Java (working exposure)</li></ul>
+        </div>
+        <div class="skill frame" style="--span:2">
+          <h3>Frontend</h3>
+          <ul class="chips"><li>React.js</li><li>TypeScript</li><li>HTML</li><li>CSS</li><li>Tailwind CSS</li><li>Chrome Extension APIs</li></ul>
+        </div>
+        <div class="skill frame" style="--span:2">
+          <h3>Backend and APIs</h3>
+          <ul class="chips"><li>Node.js</li><li>Express.js</li><li>FastAPI</li><li>REST APIs</li><li>MySQL</li></ul>
+        </div>
+        <div class="skill frame" style="--span:2">
+          <h3>Cloud and tools</h3>
+          <ul class="chips"><li>AWS (Cloud Practitioner in progress)</li><li>Git</li><li>GitHub</li><li>VS Code</li><li>Jupyter Notebook</li></ul>
+        </div>
+        <div class="skill wide frame" style="--span:6">
+          <h3>Core CS</h3>
+          <ul class="chips"><li>Data Structures and Algorithms</li><li>OOP</li><li>DBMS</li><li>Operating Systems</li><li>Computer Networks</li><li>Software Engineering</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="achievements" aria-labelledby="ach-h">
+    <div class="wrap">
+      <h2 class="h2" id="ach-h">Achievements</h2>
+      <p class="section-intro">Hackathons, programs and certificates.</p>
+      <div class="wall">
+        <article class="plaque frame tilt" data-tilt="4" style="--span:2">
+          <div class="mat"><p class="kind">Finalist</p><h3>Innovate 3.0</h3><p>One of the finalists among 100+ competing teams. Organized by Jaypee Institute of Information Technology, Noida.</p></div>
+        </article>
+        <article class="plaque frame tilt" data-tilt="4" style="--span:2">
+          <div class="mat"><p class="kind">Finalist</p><h3>Hack4Delhi hackathon</h3><p>Reached the finals of the Hack4Delhi hackathon.</p></div>
+        </article>
+        <article class="plaque frame tilt" data-tilt="4" style="--span:2">
+          <div class="mat"><p class="kind">Selected</p><h3>McKinsey.org Forward Program</h3><p>Selected as a participant.</p></div>
+        </article>
+        <article class="plaque frame tilt" data-tilt="4" style="--span:3">
+          <div class="mat"><p class="kind">Selected</p><h3>Codess.Cafe OSS Cohort</h3><p>Selected as a participant in the open-source cohort.</p></div>
+        </article>
+        <article class="plaque frame tilt" data-tilt="4" style="--span:3">
+          <div class="mat"><p class="kind">Certificate</p><h3>Deloitte Data Analytics Job Simulation</h3><p>Completed through Forage.</p><a class="link" href="https://drive.google.com/file/d/1McFZah4q3Ny0worESLDcUfoUMANwbDE4/view?usp=drive_link" target="_blank" rel="noopener">View certificate</a></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="contact" aria-labelledby="contact-h">
+    <div class="wrap">
+      <div class="contact frame">
+        <h2 class="h2" id="contact-h">Let's talk</h2>
+        <p>I'm looking for a software or AI internship and for mentorship on technical direction. Email is the quickest way to reach me.</p>
+        <div class="cta">
+          <a class="btn primary" href="mailto:adhirasethi09@gmail.com">adhirasethi09@gmail.com</a>
+          <a class="btn ghost" href="https://www.linkedin.com/in/adhira-sethi-4b6422312" target="_blank" rel="noopener">LinkedIn</a>
+          <a class="btn ghost" href="https://github.com/AdhiraSethi" target="_blank" rel="noopener">GitHub</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap foot">Adhira Sethi, 2026</footer>
+
+<script src="js/vendor/three.min.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
