@@ -130,7 +130,8 @@ button{font:inherit;color:inherit}
 .viewfinder{animation:fade 1s ease both;animation-delay:.35s}
 .stage{position:relative;height:clamp(400px,66vh,640px);border-radius:24px;overflow:hidden;
   background:radial-gradient(circle at 50% 42%,var(--stage-a),transparent 62%),linear-gradient(165deg,var(--stage-b),var(--stage-c));box-shadow:0 40px 80px -40px var(--glow3)}
-.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y;cursor:grab}
+.stage canvas.grabbing{cursor:grabbing}
 .fallback{display:none}
 .stage.no-webgl canvas{display:none}
 .stage.no-webgl .fallback{display:block;position:absolute;inset:20%;border-radius:50%;background:conic-gradient(from 210deg,var(--g1),var(--g2),var(--g3),var(--g1));filter:blur(28px);opacity:.6}
@@ -139,7 +140,11 @@ button{font:inherit;color:inherit}
 .corner.tr{top:14px;right:14px;border-top-width:2px;border-right-width:2px;border-top-right-radius:9px}
 .corner.bl{bottom:14px;left:14px;border-bottom-width:2px;border-left-width:2px;border-bottom-left-radius:9px}
 .corner.br{bottom:14px;right:14px;border-bottom-width:2px;border-right-width:2px;border-bottom-right-radius:9px}
-.hud-top{position:absolute;top:18px;left:52px;right:52px;z-index:2;font-size:.8rem;color:var(--dim)}
+.hud-top{position:absolute;top:18px;left:52px;right:52px;z-index:2;display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.78rem;color:var(--dim)}
+.hud-top li{display:flex;align-items:center;gap:6px}
+.hud-top i{width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c)}
+.hud-info{display:grid;gap:2px;min-width:0}
+.hud-info small{color:var(--dim);font-size:.78rem;line-height:1.3}
 .hud{position:absolute;left:52px;right:52px;bottom:16px;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .pose{font-family:"Unbounded",system-ui,sans-serif;font-weight:600;font-size:.86rem}
 .mini-btn{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--panel);cursor:pointer;font-size:.86rem;font-weight:500;transition:border-color .2s}
@@ -149,6 +154,8 @@ button{font:inherit;color:inherit}
 .about-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(32px,5vw,80px);align-items:center}
 .prose{margin-top:22px}
 .prose p{color:var(--dim);font-size:1.08rem;max-width:58ch;margin-bottom:1.1em}
+.prose .lead{color:var(--text);font-weight:500}
+.prose .quote{color:var(--text);font-weight:500;padding-left:20px;border-left:3px solid;border-image:linear-gradient(var(--g1),var(--g2),var(--g3)) 1;margin-top:1.6em;margin-bottom:0}
 .idcard-wrap{display:flex;justify-content:center;perspective:1200px}
 .idcard{--rx:4deg;--ry:-8deg;width:100%;max-width:400px;padding:26px 26px 28px;border-radius:28px;transform-style:preserve-3d;
   background:linear-gradient(160deg,var(--panel-solid),var(--stage-c));box-shadow:0 50px 90px -40px var(--glow3),0 20px 40px -30px rgba(0,0,0,.5)}
@@ -325,16 +332,21 @@ button{font:inherit;color:inherit}
       </div>
 
       <figure class="viewfinder frame">
-        <div class="stage" id="stage" role="img" aria-label="Animated 3D hand made of 21 tracking points, cycling through hand gestures">
+        <div class="stage" id="stage" role="img" aria-label="Interactive 3D network of Adhira's skills: languages, frontend, AI and backend tools connected by glowing links. Drag to rotate.">
           <canvas id="scene"></canvas>
           <div class="fallback" aria-hidden="true"></div>
         </div>
         <span class="corner tl" aria-hidden="true"></span><span class="corner tr" aria-hidden="true"></span>
         <span class="corner bl" aria-hidden="true"></span><span class="corner br" aria-hidden="true"></span>
-        <p class="hud-top" aria-hidden="true">21 landmarks, the points SignBridge AI tracks</p>
+        <ul class="hud-top" aria-hidden="true">
+          <li><i style="--c:var(--g1)"></i>Languages</li>
+          <li><i style="--c:var(--g3)"></i>Frontend</li>
+          <li><i style="--c:var(--g2)"></i>AI and ML</li>
+          <li><i style="--c:var(--cool)"></i>Backend and tools</li>
+        </ul>
         <div class="hud">
-          <span class="pose" id="poseName" aria-hidden="true">Open hand</span>
-          <button class="mini-btn" id="nextPose" type="button" aria-label="Show the next hand gesture">Next gesture</button>
+          <div class="hud-info" aria-hidden="true"><span class="pose" id="nodeName">Drag to rotate</span><small id="nodeCat">Hover a node to see what it is</small></div>
+          <button class="mini-btn" id="rotateBtn" type="button">Pause rotation</button>
         </div>
       </figure>
     </div>
@@ -345,11 +357,10 @@ button{font:inherit;color:inherit}
       <div>
         <h2 class="h2" id="about-h">About</h2>
         <div class="prose">
-          <p>I love coding. There's nothing quite like starting with a blank file and ending up with something that works, and that's what pulled me into computer science. These days I'm most excited by the place where software meets AI and data: taking a messy real-world problem, working out what the data is telling me, and turning it into a product people can actually use.
-
-I like building things end to end. That's meant an agentic email-triage system that decides when to reply and when to hand off to a human, a Chrome extension that turns any YouTube video into something you can question and learn from, and a real-time sign language app built on hand tracking. Along the way I've worked across Python and FastAPI, Node.js and Express, and React with TypeScript.</p>
-
-<p>Outside my own projects, I lead the technical society at JIIT Youth Club, and I'm part of the McKinsey.org Forward Program and the Codess.Cafe open-source cohort. I'm looking for a software or AI internship where I can learn from strong engineers, ship real work and keep growing..</p>
+          <p class="lead">I’m Adhira, a CSE student and AI &amp; Data Science enthusiast who genuinely enjoys getting lost in code.</p>
+          <p>I like putting my head into problems, building things from scratch, and debugging them until they finally make sense. I’m into DSA, AI/ML, data, and experimenting with new tech, mostly because I like figuring out how things work rather than just using them.</p>
+          <p>When I’m not coding, I’m probably travelling, dancing, listening to music, meeting people, or yapping about something completely unrelated.</p>
+          <p class="quote">Give me a problem, a laptop, and a little too much time, and I’ll probably build something out of it.</p>
         </div>
       </div>
       <div class="idcard-wrap">
@@ -662,7 +673,7 @@ I like building things end to end. That's meant an agentic email-triage system t
     hm.appendChild(frag);
   })();
 
-  /* 3D hand scene */
+  /* 3D skill network */
   (function(){
     var stage=document.getElementById('stage'),canvas=document.getElementById('scene');
     if(!stage||!canvas)return;
@@ -674,20 +685,22 @@ I like building things end to end. That's meant an agentic email-triage system t
     renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
 
     var animate=!reduce.matches;
+    var autoRotate=true;
     function clamp(v,a,b){return Math.min(b,Math.max(a,v));}
 
     var scene=new THREE.Scene();
     var camera=new THREE.PerspectiveCamera(42,1,.1,100);
-    camera.position.set(0,0,9.2);
+    camera.position.set(0,0,9.6);
 
     var C={g1:new THREE.Color(),g2:new THREE.Color(),g3:new THREE.Color(),cool:new THREE.Color()};
-    var tmpC=new THREE.Color();
-    var FT=[.5,0,.25,.5,.75,1]; /* slot 0 wrist, 1 thumb ... 5 pinky */
-    function colorAt(t,out){
-      if(t<.5){out.lerpColors(C.g1,C.g2,t*2);}else{out.lerpColors(C.g2,C.g3,(t-.5)*2);}
-      return out;
-    }
-    function slotOf(i){return i===0?0:1+Math.floor((i-1)/4);}
+    var tmpC=new THREE.Color(),tmpV=new THREE.Vector3();
+    var CATS=[{key:'g1',name:'Languages'},{key:'g3',name:'Frontend'},{key:'g2',name:'AI and ML'},{key:'cool',name:'Backend and tools'}];
+    var SKILLS=[
+      [0,'Python'],[0,'JavaScript'],[0,'TypeScript'],[0,'C++'],[0,'SQL'],
+      [1,'React'],[1,'Tailwind CSS'],[1,'Chrome extensions'],
+      [2,'RAG'],[2,'LLM agents'],[2,'Gemini'],[2,'LLaMA'],[2,'Groq'],[2,'MediaPipe'],[2,'pandas'],[2,'scikit-learn'],
+      [3,'FastAPI'],[3,'Node.js'],[3,'Express'],[3,'MySQL'],[3,'AWS'],[3,'Git']
+    ];
 
     /* soft round sprite */
     var gc=document.createElement('canvas');gc.width=gc.height=64;
@@ -697,168 +710,259 @@ I like building things end to end. That's meant an agentic email-triage system t
     var glowTex=new THREE.CanvasTexture(gc);
 
     /* lights */
-    scene.add(new THREE.AmbientLight(0xffffff,.55));
+    scene.add(new THREE.AmbientLight(0xffffff,.6));
     var L1=new THREE.PointLight(0xffffff,1.3,40);L1.position.set(-4,3,6);scene.add(L1);
     var L2=new THREE.PointLight(0xffffff,1.1,40);L2.position.set(5,-3,5);scene.add(L2);
     var L3=new THREE.PointLight(0xffffff,.9,40);L3.position.set(0,3,-5);scene.add(L3);
 
-    /* hand */
-    var hand=new THREE.Group(),inner=new THREE.Group();
-    inner.position.set(.45,-.2,0);
-    hand.add(inner);scene.add(hand);
+    var spin=new THREE.Group();
+    spin.rotation.x=.32;
+    scene.add(spin);
 
-    var mats=FT.map(function(){return new THREE.MeshStandardMaterial({roughness:.35,metalness:.15});});
-    var sphereGeo=new THREE.SphereGeometry(1,20,16);
-    var boneGeo=new THREE.CylinderGeometry(1,1,1,10,1);
-    var CONN=[[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[0,17],[17,18],[18,19],[19,20]];
-    var P=[],joints=[],bones=[];
-    for(var i=0;i<21;i++){
-      P.push(new THREE.Vector3());
-      var m=new THREE.Mesh(sphereGeo,mats[slotOf(i)]);
-      var rad=i===0?.12:(i%4===0?.1:.075);
-      m.scale.setScalar(rad);
-      inner.add(m);joints.push(m);
+    /* layout: one node per skill plus a quiet companion node, spread on a sphere in category bands */
+    var R=2.35,seed=7;
+    function rand(){seed=(seed*16807)%2147483647;return (seed-1)/2147483646;}
+    var nodes=[],posOf=[];
+    SKILLS.forEach(function(s){
+      nodes.push({cat:s[0],label:s[1]});
+      nodes.push({cat:s[0],label:null});
+    });
+    var N=nodes.length;
+    nodes.forEach(function(n,i){
+      var y=1-2*(i+.5)/N,r=Math.sqrt(1-y*y),phi=i*2.399963;
+      var rad=n.label?R:R*(.72+rand()*.22);
+      n.pos=new THREE.Vector3(Math.cos(phi)*r*rad,y*rad,Math.sin(phi)*r*rad);
+      posOf.push(n.pos);
+    });
+    posOf.push(new THREE.Vector3(0,0,0)); /* index N is the core */
+
+    function nodeColor(i,out){
+      if(i===N){return out.copy(C.g2);}
+      return out.copy(C[CATS[nodes[i].cat].key]);
     }
-    CONN.forEach(function(c){
-      var b=new THREE.Mesh(boneGeo,mats[slotOf(c[1])]);
-      inner.add(b);bones.push(b);
+
+    /* edges: each node links to its 3 nearest neighbours, plus a few spokes to the core */
+    var edgeSet={},edges=[];
+    function addEdge(a,b){var k=a<b?a+'-'+b:b+'-'+a;if(edgeSet[k])return;edgeSet[k]=1;edges.push([a,b]);}
+    for(var a=0;a<N;a++){
+      var ds=[];
+      for(var b=0;b<N;b++){if(b!==a){ds.push([posOf[a].distanceToSquared(posOf[b]),b]);}}
+      ds.sort(function(x,y){return x[0]-y[0];});
+      for(var q=0;q<3;q++){addEdge(a,ds[q][1]);}
+    }
+    [0,10,16,18,20,32].forEach(function(h){addEdge(N,h);});
+    var adj=[];
+    for(var ai=0;ai<=N;ai++){adj.push([]);}
+    edges.forEach(function(e,k){adj[e[0]].push(k);adj[e[1]].push(k);});
+
+    var EL=edges.length,edgePos=new Float32Array(EL*6),edgeCol=new Float32Array(EL*6);
+    edges.forEach(function(e,k){
+      var p=posOf[e[0]],q=posOf[e[1]];
+      edgePos[k*6]=p.x;edgePos[k*6+1]=p.y;edgePos[k*6+2]=p.z;
+      edgePos[k*6+3]=q.x;edgePos[k*6+4]=q.y;edgePos[k*6+5]=q.z;
+    });
+    var edgeGeo=new THREE.BufferGeometry();
+    edgeGeo.setAttribute('position',new THREE.BufferAttribute(edgePos,3));
+    edgeGeo.setAttribute('color',new THREE.BufferAttribute(edgeCol,3));
+    var edgeLines=new THREE.LineSegments(edgeGeo,new THREE.LineBasicMaterial({vertexColors:true,transparent:true,depthWrite:false}));
+    edgeLines.frustumCulled=false;spin.add(edgeLines);
+
+    /* nodes */
+    var mats=CATS.map(function(){return new THREE.MeshStandardMaterial({roughness:.35,metalness:.15});});
+    var sphereGeo=new THREE.SphereGeometry(1,20,16);
+    var hitGeo=new THREE.SphereGeometry(1,8,6);
+    var hitMat=new THREE.MeshBasicMaterial();
+    var hitMeshes=[],labeled=[];
+    nodes.forEach(function(n,i){
+      n.r=n.label?.1:.055;n.k=1;
+      n.mesh=new THREE.Mesh(sphereGeo,mats[n.cat]);
+      n.mesh.position.copy(n.pos);n.mesh.scale.setScalar(n.r);spin.add(n.mesh);
+      if(n.label){
+        var h=new THREE.Mesh(hitGeo,hitMat);
+        h.position.copy(n.pos);h.scale.setScalar(.3);h.visible=false;h.userData.i=i;
+        spin.add(h);hitMeshes.push(h);labeled.push(i);
+      }
     });
 
-    /* palm fill */
-    var palmIdx=[0,1,5,0,5,9,0,9,13,0,13,17];
-    var palmPos=new Float32Array(palmIdx.length*3);
-    var palmGeo=new THREE.BufferGeometry();
-    palmGeo.setAttribute('position',new THREE.BufferAttribute(palmPos,3));
-    var palm=new THREE.Mesh(palmGeo,new THREE.MeshBasicMaterial({transparent:true,side:THREE.DoubleSide,depthWrite:false}));
-    palm.frustumCulled=false;inner.add(palm);
-
-    /* glow halos */
-    var haloPos=new Float32Array(21*3),haloCol=new Float32Array(21*3);
+    /* node glow */
+    var haloPos=new Float32Array(N*3),haloCol=new Float32Array(N*3);
+    nodes.forEach(function(n,i){haloPos[i*3]=n.pos.x;haloPos[i*3+1]=n.pos.y;haloPos[i*3+2]=n.pos.z;});
     var haloGeo=new THREE.BufferGeometry();
     haloGeo.setAttribute('position',new THREE.BufferAttribute(haloPos,3));
     haloGeo.setAttribute('color',new THREE.BufferAttribute(haloCol,3));
-    var halo=new THREE.Points(haloGeo,new THREE.PointsMaterial({size:1.05,map:glowTex,vertexColors:true,transparent:true,depthWrite:false}));
-    halo.frustumCulled=false;inner.add(halo);
+    var halo=new THREE.Points(haloGeo,new THREE.PointsMaterial({size:.6,map:glowTex,vertexColors:true,transparent:true,depthWrite:false}));
+    halo.frustumCulled=false;spin.add(halo);
 
-    /* rings */
-    function ring(radius,tube,rx,ry,key){
-      var m=new THREE.Mesh(new THREE.TorusGeometry(radius,tube,8,160),new THREE.MeshBasicMaterial({transparent:true,opacity:.7}));
-      m.rotation.set(rx,ry,0);m.userData.key=key;scene.add(m);return m;
-    }
-    var rings=[ring(2.95,.014,1.15,.3,'g2'),ring(2.4,.012,.35,1.1,'g3'),ring(3.5,.009,1.6,-.5,'g1')];
+    /* core */
+    var coreMat=new THREE.MeshStandardMaterial({roughness:.25,metalness:.2});
+    var core=new THREE.Mesh(new THREE.SphereGeometry(.34,32,24),coreMat);spin.add(core);
+    var coreWire=new THREE.Mesh(new THREE.IcosahedronGeometry(.62,1),new THREE.MeshBasicMaterial({wireframe:true,transparent:true}));spin.add(coreWire);
+    var coreHalo=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex,transparent:true,depthWrite:false}));
+    coreHalo.scale.setScalar(3.2);spin.add(coreHalo);
 
-    /* floating shapes */
-    var floaters=[];
-    function floater(geo,solid,key,pos,speed){
-      var mat=solid?new THREE.MeshStandardMaterial({flatShading:true,roughness:.3,metalness:.3}):new THREE.MeshBasicMaterial({wireframe:true,transparent:true,opacity:.85});
-      var m=new THREE.Mesh(geo,mat);
-      m.position.set(pos[0],pos[1],pos[2]);
-      m.userData={key:key,base:pos.slice(),speed:speed,phase:Math.random()*6.28,solid:solid};
-      scene.add(m);floaters.push(m);
+    /* pulses that random-walk along the links */
+    var PN=26,pulses=[],pulsePos=new Float32Array(PN*3),pulseCol=new Float32Array(PN*3);
+    function aim(p,node){
+      var list=adj[node],e=list[Math.floor(Math.random()*list.length)];
+      p.from=node;p.to=edges[e][0]===node?edges[e][1]:edges[e][0];
     }
-    floater(new THREE.IcosahedronGeometry(.3,0),true,'g2',[-2.5,2.3,-.4],.6);
-    floater(new THREE.OctahedronGeometry(.26,0),false,'cool',[2.6,1.7,.6],.8);
-    floater(new THREE.TetrahedronGeometry(.3,0),false,'g2',[2.3,-2.4,-.3],.7);
-    floater(new THREE.TorusKnotGeometry(.2,.065,48,8),true,'g3',[-2.4,-2.1,.7],.9);
-    floater(new THREE.IcosahedronGeometry(.16,0),false,'g1',[.6,3.1,-1],.5);
+    var pulseGeo=new THREE.BufferGeometry();
+    pulseGeo.setAttribute('position',new THREE.BufferAttribute(pulsePos,3));
+    pulseGeo.setAttribute('color',new THREE.BufferAttribute(pulseCol,3));
+    var pulsePts=new THREE.Points(pulseGeo,new THREE.PointsMaterial({size:.34,map:glowTex,vertexColors:true,transparent:true,depthWrite:false}));
+    pulsePts.frustumCulled=false;spin.add(pulsePts);
+    function setPulseColor(i){
+      nodeColor(pulses[i].from,tmpC);
+      pulseCol[i*3]=tmpC.r;pulseCol[i*3+1]=tmpC.g;pulseCol[i*3+2]=tmpC.b;
+      pulseGeo.attributes.color.needsUpdate=true;
+    }
+    for(var pi=0;pi<PN;pi++){
+      var pl={t:Math.random(),s:.5+Math.random()*.6};
+      aim(pl,Math.floor(Math.random()*(N+1)));
+      pulses.push(pl);
+    }
 
     /* dust */
-    var N=220,dp=new Float32Array(N*3);
-    for(var d=0;d<N;d++){
-      var r=3+Math.random()*4.2,th=Math.random()*6.283,ph=Math.acos(2*Math.random()-1);
-      dp[d*3]=r*Math.sin(ph)*Math.cos(th);dp[d*3+1]=r*Math.sin(ph)*Math.sin(th);dp[d*3+2]=r*Math.cos(ph)-1;
+    var DN=200,dp=new Float32Array(DN*3);
+    for(var d=0;d<DN;d++){
+      var rr=3.4+Math.random()*4,th=Math.random()*6.283,ph=Math.acos(2*Math.random()-1);
+      dp[d*3]=rr*Math.sin(ph)*Math.cos(th);dp[d*3+1]=rr*Math.sin(ph)*Math.sin(th);dp[d*3+2]=rr*Math.cos(ph)-1;
     }
     var dustGeo=new THREE.BufferGeometry();dustGeo.setAttribute('position',new THREE.BufferAttribute(dp,3));
     var dust=new THREE.Points(dustGeo,new THREE.PointsMaterial({size:.09,map:glowTex,transparent:true,depthWrite:false}));
     dust.frustumCulled=false;scene.add(dust);
 
-    /* hand kinematics */
-    var FING=[
-      {mcp:[-.72,.15,0],len:[.7,.45,.4],fan:.12},
-      {mcp:[-.24,.30,0],len:[.78,.5,.42],fan:.03},
-      {mcp:[.24,.20,0],len:[.7,.47,.4],fan:-.05},
-      {mcp:[.70,0,0],len:[.55,.35,.33],fan:-.16}
-    ];
-    var TH_OPEN=[[-.45,-1.15,0],[-.95,-.75,.1],[-1.35,-.35,.15],[-1.65,0,.15]];
-    var TH_FOLD=[[-.45,-1.15,0],[-.85,-.65,.35],[-.7,-.2,.6],[-.3,-.3,.65]];
-    var BEND=[1.2,1.5,1.0];
-    function solve(curl,fan){
-      P[0].set(0,-1.6,0);
-      var k,o,f,c=curl[0];
-      for(k=0;k<4;k++){
-        o=TH_OPEN[k];f=TH_FOLD[k];
-        P[1+k].set(o[0]+(f[0]-o[0])*c,o[1]+(f[1]-o[1])*c,o[2]+(f[2]-o[2])*c);
-      }
-      for(var i=0;i<4;i++){
-        var F=FING[i],cc=curl[i+1],a=F.fan+fan[i],sa=Math.sin(a),ca=Math.cos(a);
-        var x=F.mcp[0],y=F.mcp[1],z=F.mcp[2],base=5+i*4,A=0;
-        P[base].set(x,y,z);
-        for(var s=0;s<3;s++){
-          A+=cc*BEND[s];
-          var dy=Math.cos(A),dz=Math.sin(A),L=F.len[s];
-          x+=-sa*dy*L;y+=ca*dy*L;z+=dz*L;
-          P[base+1+s].set(x,y,z);
+    /* labels */
+    function labelTexture(text,color){
+      var dark=isDark(),ratio=2,fs=26*ratio,pad=14*ratio,dot=6*ratio;
+      var font='600 '+fs+'px "Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif';
+      var c=document.createElement('canvas'),x=c.getContext('2d');
+      x.font=font;
+      var tw=Math.ceil(x.measureText(text).width);
+      var w=tw+pad*2+dot*2+6*ratio,h=Math.round(fs+pad*1.1),r=h/2;
+      c.width=w;c.height=h;
+      x.font=font;x.textBaseline='middle';
+      x.beginPath();
+      x.moveTo(r,0);x.lineTo(w-r,0);x.arc(w-r,r,r,-Math.PI/2,Math.PI/2);
+      x.lineTo(r,h);x.arc(r,r,r,Math.PI/2,Math.PI*1.5);x.closePath();
+      x.fillStyle=dark?'rgba(22,14,48,.84)':'rgba(255,255,255,.92)';x.fill();
+      x.lineWidth=2*ratio;x.strokeStyle=color.getStyle();x.globalAlpha=.9;x.stroke();x.globalAlpha=1;
+      x.fillStyle=color.getStyle();
+      x.beginPath();x.arc(pad*.9+dot,h/2,dot,0,Math.PI*2);x.fill();
+      x.fillStyle=dark?'#F5F1FF':'#1B1233';
+      x.fillText(text,pad*.9+dot*2+6*ratio,h/2+ratio);
+      var tex=new THREE.CanvasTexture(c);
+      tex.minFilter=THREE.LinearFilter;tex.generateMipmaps=false;
+      return {tex:tex,aspect:w/h};
+    }
+    function buildLabels(){
+      labeled.forEach(function(i){
+        var n=nodes[i];
+        nodeColor(i,tmpC);
+        var L=labelTexture(n.label,tmpC);
+        if(!n.sprite){
+          n.sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:L.tex,transparent:true,depthTest:false,depthWrite:false}));
+          n.sprite.center.set(.5,-.75);n.sprite.renderOrder=10;n.sprite.position.copy(n.pos);spin.add(n.sprite);
+        }else{
+          if(n.sprite.material.map){n.sprite.material.map.dispose();}
+          n.sprite.material.map=L.tex;n.sprite.material.needsUpdate=true;
         }
+        n.aspect=L.aspect;
+        n.sprite.scale.set(.34*L.aspect,.34,1);
+      });
+    }
+
+    /* interaction */
+    var nameEl=document.getElementById('nodeName'),catEl=document.getElementById('nodeCat'),rotateBtn=document.getElementById('rotateBtn');
+    var DEF_NAME='Drag to rotate',DEF_CAT='Hover a node to see what it is';
+    var hover=-1,drag=null,velY=animate?.16:0;
+    var ray=new THREE.Raycaster(),ndc=new THREE.Vector2();
+    function setHover(h){
+      if(h===hover)return;
+      hover=h;
+      nameEl.textContent=h>=0?nodes[h].label:DEF_NAME;
+      catEl.textContent=h>=0?CATS[nodes[h].cat].name:DEF_CAT;
+      canvas.style.cursor=h>=0?'pointer':'';
+    }
+    function setNdc(e){
+      var r=canvas.getBoundingClientRect();
+      ndc.x=((e.clientX-r.left)/r.width)*2-1;
+      ndc.y=-((e.clientY-r.top)/r.height)*2+1;
+    }
+    function pickHover(){
+      ray.setFromCamera(ndc,camera);
+      var hits=ray.intersectObjects(hitMeshes,false);
+      setHover(hits.length?hits[0].object.userData.i:-1);
+    }
+    canvas.addEventListener('pointerdown',function(e){
+      drag={id:e.pointerId,x:e.clientX,y:e.clientY,t:performance.now()};
+      try{canvas.setPointerCapture(e.pointerId);}catch(err){}
+      canvas.classList.add('grabbing');
+      setNdc(e);pickHover();requestDraw();
+    });
+    canvas.addEventListener('pointermove',function(e){
+      setNdc(e);
+      if(drag&&drag.id===e.pointerId){
+        var dx=e.clientX-drag.x,dy=e.clientY-drag.y,now=performance.now(),dtm=Math.max(now-drag.t,8)/1000;
+        drag.x=e.clientX;drag.y=e.clientY;drag.t=now;
+        spin.rotation.y+=dx*.008;
+        if(e.pointerType!=='touch'){spin.rotation.x=clamp(spin.rotation.x+dy*.006,-.9,.9);}
+        velY=clamp(dx*.008/dtm,-3,3);
       }
+      pickHover();requestDraw();
+    });
+    function endDrag(e){
+      if(drag&&drag.id===e.pointerId){drag=null;canvas.classList.remove('grabbing');}
     }
-
-    var POSES=[
-      {name:'Open hand',curl:[0,0,0,0,0],fan:[.02,0,-.02,-.05]},
-      {name:'I love you',curl:[0,0,1,1,0],fan:[.12,0,0,-.14]},
-      {name:'Peace',curl:[1,0,0,1,1],fan:[.17,-.09,0,0]},
-      {name:'Point',curl:[1,0,1,1,1],fan:[0,0,0,0]},
-      {name:'Closed fist',curl:[1,1,1,1,1],fan:[0,0,0,0]}
-    ];
-    var poseIdx=0,cur={curl:POSES[0].curl.slice(),fan:POSES[0].fan.slice()},use=[0,0,0,0,0];
-    var poseName=document.getElementById('poseName'),nextBtn=document.getElementById('nextPose');
-    var ptr={x:0,y:0,tx:0,ty:0};
-    window.addEventListener('pointermove',function(e){
-      ptr.tx=(e.clientX/window.innerWidth-.5)*2;ptr.ty=(e.clientY/window.innerHeight-.5)*2;
-    },{passive:true});
-
-    var Y=new THREE.Vector3(0,1,0),tmp=new THREE.Vector3();
-    function updateBone(m,a,b){
-      tmp.subVectors(b,a);var len=tmp.length()||.0001;
-      m.position.addVectors(a,b).multiplyScalar(.5);
-      m.quaternion.setFromUnitVectors(Y,tmp.normalize());
-      m.scale.set(.03,len,.03);
-    }
+    canvas.addEventListener('pointerup',endDrag);
+    canvas.addEventListener('pointercancel',endDrag);
+    canvas.addEventListener('pointerleave',function(e){
+      if(!drag&&e.pointerType!=='touch'){setHover(-1);requestDraw();}
+    });
+    if(!animate){rotateBtn.hidden=true;}
+    rotateBtn.addEventListener('click',function(){
+      autoRotate=!autoRotate;
+      rotateBtn.textContent=autoRotate?'Pause rotation':'Play rotation';
+    });
 
     function draw(dt,t,snap){
-      var tgt=POSES[poseIdx],k=snap?1:1-Math.exp(-dt*5.5),i;
-      for(i=0;i<5;i++){cur.curl[i]+=(tgt.curl[i]-cur.curl[i])*k;}
-      for(i=0;i<4;i++){cur.fan[i]+=(tgt.fan[i]-cur.fan[i])*k;}
-      var w=animate?1:0;
-      for(i=0;i<5;i++){use[i]=clamp(cur.curl[i]+Math.sin(t*1.7+i*.9)*.035*w,0,1);}
-      solve(use,cur.fan);
-      for(i=0;i<21;i++){
-        joints[i].position.copy(P[i]);
-        haloPos[i*3]=P[i].x;haloPos[i*3+1]=P[i].y;haloPos[i*3+2]=P[i].z;
+      var i,k=snap?1:1-Math.exp(-dt*10),w=animate?1:0;
+      if(!drag){
+        spin.rotation.y+=velY*dt;
+        if(!snap){velY+=((autoRotate&&animate?.16:0)-velY)*(1-Math.exp(-dt*1.8));}
       }
-      haloGeo.attributes.position.needsUpdate=true;
-      for(i=0;i<CONN.length;i++){updateBone(bones[i],P[CONN[i][0]],P[CONN[i][1]]);}
-      for(i=0;i<palmIdx.length;i++){
-        var p=P[palmIdx[i]];palmPos[i*3]=p.x;palmPos[i*3+1]=p.y;palmPos[i*3+2]=p.z;
+      spin.position.y=Math.sin(t*.8)*.05*w;
+      for(i=0;i<PN;i++){
+        var p=pulses[i];
+        if(animate&&!snap){
+          p.t+=dt*p.s;
+          if(p.t>=1){aim(p,p.to);p.t-=1;setPulseColor(i);}
+        }
+        var pa=posOf[p.from],pb=posOf[p.to];
+        pulsePos[i*3]=pa.x+(pb.x-pa.x)*p.t;
+        pulsePos[i*3+1]=pa.y+(pb.y-pa.y)*p.t;
+        pulsePos[i*3+2]=pa.z+(pb.z-pa.z)*p.t;
       }
-      palmGeo.attributes.position.needsUpdate=true;
-
-      var k2=snap?1:1-Math.exp(-dt*3);
-      ptr.x+=(ptr.tx-ptr.x)*k2;ptr.y+=(ptr.ty-ptr.y)*k2;
-      hand.rotation.y=-.35+Math.sin(t*.45)*.35*w+ptr.x*.5;
-      hand.rotation.x=-.1+ptr.y*.3+Math.sin(t*.35)*.05*w;
-      hand.position.y=Math.sin(t*.9)*.08*w;
-      for(i=0;i<rings.length;i++){
-        rings[i].rotation.z+=dt*(.22+i*.09)*(i%2?-1:1);
-        rings[i].rotation.x+=dt*.05;
-      }
-      for(i=0;i<floaters.length;i++){
-        var f=floaters[i],u=f.userData;
-        f.position.y=u.base[1]+Math.sin(t*u.speed+u.phase)*.22*w;
-        f.rotation.x+=dt*.5*u.speed;f.rotation.y+=dt*.7*u.speed;
-      }
+      pulseGeo.attributes.position.needsUpdate=true;
+      coreWire.rotation.x+=dt*.3;coreWire.rotation.y+=dt*.4;
+      core.scale.setScalar(1+Math.sin(t*2)*.05*w);
       dust.rotation.y+=dt*.03;
+      spin.updateMatrixWorld(true);
+      for(i=0;i<labeled.length;i++){
+        var n=nodes[labeled[i]];
+        tmpV.copy(n.pos).applyMatrix4(spin.matrixWorld);
+        var f=clamp((tmpV.z/R+1)/2,0,1),o=clamp((f-.32)/.4,0,1),hov=labeled[i]===hover;
+        n.k+=((hov?1.8:1)-n.k)*k;
+        n.mesh.scale.setScalar(n.r*n.k);
+        n.sprite.material.opacity=hov?1:o*.95;
+        var sc=.34*(hov?1.2:1);
+        n.sprite.scale.set(sc*n.aspect,sc,1);
+      }
       renderer.render(scene,camera);
     }
+
+    var raf=0,running=false,last=0,inView=true;
+    function requestDraw(){if(!running){draw(0,performance.now()/1000,true);}}
 
     function applyTheme(){
       var cs=getComputedStyle(root),dark=isDark(),i;
@@ -866,64 +970,63 @@ I like building things end to end. That's meant an agentic email-triage system t
       C.g2.set(cs.getPropertyValue('--g2').trim());
       C.g3.set(cs.getPropertyValue('--g3').trim());
       C.cool.set(cs.getPropertyValue('--cool').trim());
-      for(i=0;i<FT.length;i++){
-        colorAt(FT[i],tmpC);
-        mats[i].color.copy(tmpC);mats[i].emissive.copy(tmpC);mats[i].emissiveIntensity=dark?.6:.22;
+      for(i=0;i<CATS.length;i++){
+        var col=C[CATS[i].key];
+        mats[i].color.copy(col);mats[i].emissive.copy(col);mats[i].emissiveIntensity=dark?.65:.25;
       }
-      for(i=0;i<21;i++){
-        colorAt(FT[slotOf(i)],tmpC);
+      for(i=0;i<N;i++){
+        nodeColor(i,tmpC);
         haloCol[i*3]=tmpC.r;haloCol[i*3+1]=tmpC.g;haloCol[i*3+2]=tmpC.b;
       }
       haloGeo.attributes.color.needsUpdate=true;
       halo.material.blending=dark?THREE.AdditiveBlending:THREE.NormalBlending;
-      halo.material.opacity=dark?.6:.28;halo.material.needsUpdate=true;
-      palm.material.color.copy(C.g2);palm.material.opacity=dark?.16:.13;
-      rings.forEach(function(r){r.material.color.copy(C[r.userData.key]);r.material.opacity=dark?.7:.6;});
-      floaters.forEach(function(f){
-        f.material.color.copy(C[f.userData.key]);
-        if(f.userData.solid){f.material.emissive.copy(C[f.userData.key]);f.material.emissiveIntensity=dark?.35:.12;}
+      halo.material.opacity=dark?.55:.25;halo.material.needsUpdate=true;
+      edges.forEach(function(e,k){
+        nodeColor(e[0],tmpC);edgeCol[k*6]=tmpC.r;edgeCol[k*6+1]=tmpC.g;edgeCol[k*6+2]=tmpC.b;
+        nodeColor(e[1],tmpC);edgeCol[k*6+3]=tmpC.r;edgeCol[k*6+4]=tmpC.g;edgeCol[k*6+5]=tmpC.b;
       });
+      edgeGeo.attributes.color.needsUpdate=true;
+      edgeLines.material.blending=dark?THREE.AdditiveBlending:THREE.NormalBlending;
+      edgeLines.material.opacity=dark?.42:.42;edgeLines.material.needsUpdate=true;
+      coreMat.color.copy(C.g2);coreMat.emissive.copy(C.g1);coreMat.emissiveIntensity=dark?.8:.35;
+      coreWire.material.color.copy(C.g3);coreWire.material.opacity=dark?.6:.55;
+      coreHalo.material.color.copy(C.g2);coreHalo.material.opacity=dark?.85:.35;
+      coreHalo.material.blending=dark?THREE.AdditiveBlending:THREE.NormalBlending;coreHalo.material.needsUpdate=true;
+      pulsePts.material.blending=dark?THREE.AdditiveBlending:THREE.NormalBlending;
+      pulsePts.material.opacity=dark?1:.9;pulsePts.material.needsUpdate=true;
+      for(i=0;i<PN;i++){setPulseColor(i);}
       dust.material.color.copy(dark?C.cool:C.g3);
       dust.material.blending=dark?THREE.AdditiveBlending:THREE.NormalBlending;
-      dust.material.opacity=dark?.75:.45;dust.material.needsUpdate=true;
+      dust.material.opacity=dark?.7:.4;dust.material.needsUpdate=true;
       L1.color.copy(C.g2);L2.color.copy(C.g3);L3.color.copy(dark?C.cool:C.g1);
-      if(!running){draw(0,performance.now()/1000,true);}
+      buildLabels();
+      requestDraw();
     }
 
     function resize(){
       var w=stage.clientWidth,h=stage.clientHeight;if(!w||!h)return;
       renderer.setSize(w,h,false);
       camera.aspect=w/h;
-      camera.position.z=9.2*Math.max(1,.95/camera.aspect);
+      camera.position.z=9.6*Math.max(1,.95/camera.aspect);
       camera.updateProjectionMatrix();
-      if(!running){draw(0,performance.now()/1000,true);}
-    }
-
-    var raf=0,running=false,last=0,nextSwitch=0,inView=true;
-    function setPose(i){
-      poseIdx=(i+POSES.length)%POSES.length;
-      poseName.textContent=POSES[poseIdx].name;
-      if(!running){draw(0,performance.now()/1000,true);}
+      requestDraw();
     }
     function loop(now){
       if(!running)return;
       var dt=Math.min((now-last)/1000,.05);last=now;
-      if(now>nextSwitch){setPose(poseIdx+1);nextSwitch=now+3400;}
       draw(dt,now/1000,false);
       raf=requestAnimationFrame(loop);
     }
     function start(){
       if(running||!animate)return;
-      running=true;last=performance.now();nextSwitch=last+3000;
+      running=true;last=performance.now();
       raf=requestAnimationFrame(loop);
     }
     function stop(){running=false;cancelAnimationFrame(raf);}
-    nextBtn.addEventListener('click',function(){
-      setPose(poseIdx+1);nextSwitch=performance.now()+5000;
-    });
 
     applyTheme();
     resize();
+    if(document.fonts&&document.fonts.ready){document.fonts.ready.then(function(){buildLabels();requestDraw();});}
     window.addEventListener('themechange',applyTheme);
     if('ResizeObserver' in window){new ResizeObserver(resize).observe(stage);}else{window.addEventListener('resize',resize);}
     if('IntersectionObserver' in window){
